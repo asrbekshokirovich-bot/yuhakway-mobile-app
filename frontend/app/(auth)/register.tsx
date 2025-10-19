@@ -43,9 +43,14 @@ export default function Register() {
       await signUp(email, password, fullName);
       Alert.alert(
         'Muvaffaqiyat',
-        'Hisobingiz yaratildi! Emailingizni tasdiqlang va kirish uchun login sahifasiga o\'ting.'
+        'Hisobingiz muvaffaqiyatli yaratildi!',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/(tabs)'),
+          },
+        ]
       );
-      router.replace('/(auth)/login');
     } catch (error: any) {
       Alert.alert('Xatolik', error.message || 'Ro\'yxatdan o\'tish jarayonida xatolik yuz berdi');
     } finally {
