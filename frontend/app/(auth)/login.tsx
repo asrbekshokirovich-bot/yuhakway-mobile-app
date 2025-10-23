@@ -65,10 +65,11 @@ export default function Login() {
             end={{ x: 1, y: 1 }}
           >
             <View style={styles.logoContainer}>
-              <View style={[styles.logoCircle, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                <Ionicons name="school" size={48} color="#FFFFFF" />
-              </View>
-              <Text style={styles.logoText}>Yuhakway</Text>
+              <Image 
+                source={require('../../assets/yuhakway-logo-1.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
               <Text style={styles.tagline}>Your Pathway to Korean Universities</Text>
             </View>
           </LinearGradient>
