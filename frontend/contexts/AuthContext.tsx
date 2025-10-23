@@ -41,22 +41,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: undefined,
         },
-        emailRedirectTo: undefined,
-      },
-    });
-    if (error) throw error;
-    
-    // Auto sign in after signup if session is available
-    if (data.session) {
-      setSession(data.session);
-      setUser(data.user);
+      });
+      
+      console.log('Signup response:', { data, error });
+      
+      if (error) throw error;
+      
+      // Check if session exists (auto-confirmed) or if confirmation is needed
+      if (data.session) {
+        console.log('Session created immediately, user auto-confirmed');
+        setSession(data.session);
+        setUser(data.user);
+      } else if (data.user && !data.session) {
+        // User created but needs confirmation
+        console.log('User created, but confirmation may be required');
+        // Try to sign in immediately
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (signInError) {
+          console.error('Auto sign-in error:', signInError);
+          throw new Error('Account created but auto-login failed. Please try logging in manually.');
+        }
+        
+        if (signInData.session) {
+          setSession(signInData.session);
+          setUser(signInData.user);
+        }
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
     }
   };
 
