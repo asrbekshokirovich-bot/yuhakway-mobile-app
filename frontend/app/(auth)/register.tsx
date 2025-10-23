@@ -39,12 +39,41 @@ export default function Register() {
     }
 
     setLoading(true);
+    
+    // Add timeout protection
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      Alert.alert(
+        'Xatolik',
+        'Ro\'yxatdan o\'tish juda uzoq davom etmoqda. Iltimos, qaytadan urinib ko\'ring yoki internet aloqangizni tekshiring.'
+      );
+    }, 30000); // 30 second timeout
+
     try {
+      console.log('Starting registration...');
       await signUp(email, password, fullName);
-      // User is automatically logged in after signup
+      clearTimeout(timeoutId);
+      console.log('Registration successful!');
       // Navigation will happen automatically via auth state change
     } catch (error: any) {
-      Alert.alert('Xatolik', error.message || 'Ro\'yxatdan o\'tish jarayonida xatolik yuz berdi');
+      clearTimeout(timeoutId);
+      console.error('Registration error:', error);
+      
+      let errorMessage = 'Ro\'yxatdan o\'tish jarayonida xatolik yuz berdi';
+      
+      if (error.message) {
+        if (error.message.includes('already registered')) {
+          errorMessage = 'Bu email allaqachon ro\'yxatdan o\'tgan. Iltimos, kirish tugmasini bosing.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'Email manzil noto\'g\'ri formatda. Iltimos, to\'g\'ri email kiriting.';
+        } else if (error.message.includes('Password')) {
+          errorMessage = 'Parol talablarga javob bermaydi. Kamida 6 belgidan iborat bo\'lishi kerak.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      Alert.alert('Xatolik', errorMessage);
       setLoading(false);
     }
   };
