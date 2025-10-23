@@ -9,7 +9,7 @@ import {
   Platform,
   ScrollView,
   Alert,
-  Image,
+  Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,11 +17,14 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const { colors } = useTheme();
   const router = useRouter();
@@ -50,64 +53,110 @@ export default function Login() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {/* Hero Section with Gradient */}
           <LinearGradient
-            colors={[colors.primary, colors.primaryLight]}
-            style={styles.logoContainer}
+            colors={colors.gradient1}
+            style={styles.heroSection}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.logoText}>Yuhakway</Text>
+            <View style={styles.logoContainer}>
+              <View style={[styles.logoCircle, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                <Ionicons name="school" size={48} color="#FFFFFF" />
+              </View>
+              <Text style={styles.logoText}>Yuhakway</Text>
+              <Text style={styles.tagline}>Your Pathway to Korean Universities</Text>
+            </View>
           </LinearGradient>
 
-          <View style={styles.formContainer}>
-            <Text style={[styles.title, { color: colors.text }]}>{t('auth.welcomeBack')}</Text>
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-              {t('auth.signInDesc')}
-            </Text>
-
-            <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: colors.text }]}>{t('auth.email')}</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
-                placeholder="example@email.com"
-                placeholderTextColor={colors.textSecondary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
+          {/* Form Section */}
+          <View style={[styles.formContainer, { backgroundColor: colors.background }]}>
+            <View style={styles.welcomeSection}>
+              <Text style={[styles.title, { color: colors.text }]}>Xush kelibsiz</Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+                Hisobingizga kirish uchun ma'lumotlaringizni kiriting
+              </Text>
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: colors.text }]}>{t('auth.password')}</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: colors.card, color: colors.text, borderColor: colors.border }]}
-                placeholder="••••••••"
-                placeholderTextColor={colors.textSecondary}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoComplete="password"
-              />
+            {/* Email Input */}
+            <View style={styles.inputWrapper}>
+              <Text style={[styles.label, { color: colors.text }]}>Email</Text>
+              <View style={[styles.inputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <Ionicons name="mail-outline" size={20} color={colors.textSecondary} style={styles.inputIcon} />
+                <TextInput
+                  style={[styles.input, { color: colors.text }]}
+                  placeholder="example@email.com"
+                  placeholderTextColor={colors.textSecondary}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
+              </View>
             </View>
 
+            {/* Password Input */}
+            <View style={styles.inputWrapper}>
+              <Text style={[styles.label, { color: colors.text }]}>Parol</Text>
+              <View style={[styles.inputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <Ionicons name="lock-closed-outline" size={20} color={colors.textSecondary} style={styles.inputIcon} />
+                <TextInput
+                  style={[styles.input, { color: colors.text }]}
+                  placeholder="••••••••"
+                  placeholderTextColor={colors.textSecondary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoComplete="password"
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                  <Ionicons 
+                    name={showPassword ? "eye-outline" : "eye-off-outline"} 
+                    size={20} 
+                    color={colors.textSecondary} 
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Login Button */}
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
+              style={[styles.button, { backgroundColor: colors.primary, opacity: loading ? 0.7 : 1 }]}
               onPress={handleLogin}
               disabled={loading}
+              activeOpacity={0.8}
             >
-              <Text style={styles.buttonText}>
-                {loading ? t('auth.loading') : t('auth.signIn')}
-              </Text>
+              <LinearGradient
+                colors={colors.gradient1}
+                style={styles.buttonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                {loading ? (
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="hourglass-outline" size={20} color="#FFFFFF" />
+                    <Text style={styles.buttonText}>Yuklanmoqda...</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.buttonText}>Kirish</Text>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
 
+            {/* Footer */}
             <View style={styles.footer}>
               <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                {t('auth.dontHaveAccount')}
+                Hisobingiz yo'qmi?
               </Text>
-              <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+              <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.7}>
                 <Text style={[styles.footerLink, { color: colors.primary }]}>
-                  {t('auth.signUp')}
+                  Ro'yxatdan o'tish
                 </Text>
               </TouchableOpacity>
             </View>
@@ -128,68 +177,121 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
+  heroSection: {
+    paddingVertical: 60,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   logoContainer: {
-    height: 200,
-    justifyContent: 'center',
     alignItems: 'center',
   },
+  logoCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   logoText: {
-    fontSize: 42,
-    fontWeight: 'bold',
+    fontSize: 36,
+    fontWeight: '700',
     color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  tagline: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
   },
   formContainer: {
     flex: 1,
     padding: 24,
+    paddingTop: 32,
+  },
+  welcomeSection: {
+    marginBottom: 32,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '700',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 32,
+    lineHeight: 22,
   },
-  inputContainer: {
+  inputWrapper: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     marginBottom: 8,
   },
-  input: {
-    height: 52,
-    borderWidth: 1,
-    borderRadius: 12,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 56,
+    borderWidth: 1.5,
+    borderRadius: 16,
     paddingHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
+    paddingVertical: 0,
+  },
+  eyeIcon: {
+    padding: 4,
   },
   button: {
-    height: 52,
-    borderRadius: 12,
+    height: 56,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 8,
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  buttonGradient: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 24,
-    gap: 4,
+    marginTop: 32,
+    gap: 6,
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 15,
   },
   footerLink: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
 });
