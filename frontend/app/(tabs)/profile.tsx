@@ -159,6 +159,16 @@ export default function ProfileScreen() {
               <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
             </View>
           </View>
+
+          <TouchableOpacity style={styles.settingRow} onPress={() => router.push('/change-password' as any)}>
+            <View style={styles.settingLeft}>
+              <Ionicons name="key" size={20} color={colors.primary} />
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Parolni o'zgartirish</Text>
+            </View>
+            <View style={styles.settingRight}>
+              <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Sign Out Button */}
