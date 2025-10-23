@@ -269,18 +269,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  forgotPassword: {
+    marginTop: 24,
     alignItems: 'center',
-    marginTop: 32,
-    gap: 6,
   },
-  footerText: {
+  forgotPasswordText: {
     fontSize: 15,
-  },
-  footerLink: {
-    fontSize: 15,
-    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });
