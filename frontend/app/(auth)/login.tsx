@@ -150,16 +150,14 @@ export default function Login() {
             </TouchableOpacity>
 
             {/* Footer */}
-            <View style={styles.footer}>
-              <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                Hisobingiz yo'qmi?
+            <TouchableOpacity 
+              onPress={() => Alert.alert('Parolni tiklash', 'Parolni tiklash uchun admin bilan bog\'laning: admin@yuhakway.uz')}
+              style={styles.forgotPassword}
+            >
+              <Text style={[styles.forgotPasswordText, { color: colors.textSecondary }]}>
+                Parolni unutdingizmi?
               </Text>
-              <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.7}>
-                <Text style={[styles.footerLink, { color: colors.primary }]}>
-                  Ro'yxatdan o'tish
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
