@@ -41,19 +41,10 @@ export default function Register() {
     setLoading(true);
     try {
       await signUp(email, password, fullName);
-      Alert.alert(
-        'Muvaffaqiyat',
-        'Hisobingiz muvaffaqiyatli yaratildi!',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/(tabs)'),
-          },
-        ]
-      );
+      // User is automatically logged in after signup
+      // Navigation will happen automatically via auth state change
     } catch (error: any) {
       Alert.alert('Xatolik', error.message || 'Ro\'yxatdan o\'tish jarayonida xatolik yuz berdi');
-    } finally {
       setLoading(false);
     }
   };
